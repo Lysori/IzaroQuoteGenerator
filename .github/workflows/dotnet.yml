@@ -7,12 +7,13 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
 
+  build:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v2
       with:
@@ -27,5 +28,17 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
 
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
     - name: Release
-      run: dotnet publish -c Release /p:Version=1.0.0 --runtime win-x64
+      run: dotnet publish -c Release --output ./app --properties:Version=1.0.0 --runtime win-x64
+
+    - name: Archive Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-release
+        path: ./app
